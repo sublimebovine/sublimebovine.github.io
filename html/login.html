@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            background-image: url(images/TestImage.png);
+            background-position: center
+        }
+        .field {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        .field > .box {
+            position: absolute;
+            width: 40%;
+            margin: 45%
+        }
+        
+        form {
+            background-color: white;
+            border: 2px solid rgba(0, 0, 0, 0.02);
+            border-radius: 20px;
+            width:60%;
+            margin: auto;
+            margin-top: 20%;
+        }
+        .container {
+            background-color: red;
+            width: 50%;
+        }
+
+        .username, .password {
+        width: 76%;
+        color: rgb(38, 50, );
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 1px;
+        background: rgba(136, 126, 126, 0.04);
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        outline: none;
+        box-sizing: border-box;
+        border: 2px solid rgba(0, 0, 0, 0.02);
+        margin-bottom: 50px;
+        margin-left: 46px;
+        text-align: center;
+        margin-bottom: 27px;
+        font-family: 'Ubuntu', sans-serif;
+        }
+
+        .field > .lbl {
+            margin-right: 80%;
+            padding-bottom: 25px;
+            font-family: 'Ubuntu', sans-serif;
+        }
+        .field > div { 
+            margin:5px;
+
+        }
+        .loginbutton{
+            text-align: center;
+            margin: 5px;
+        }
+
+        .loginbutton > input {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px;
+            width: 80%;
+            height: 50px;
+            background-color: #0077b6;
+            border-radius: 25px;
+            font-family: Ubuntu-Bold;
+            font-size: 15px;
+            color: #fff;
+            line-height: 1.2;
+            text-transform: uppercase;
+            border: 2px solid rgba(0, 0, 0, 0.02);
+            margin: auto;
+        }
+    </style>
+
+</head>
+<body>
+    <div>
+        <form>
+            <div class="container">
+
+            </div>
+            <div class="user field">
+                <div class="lbl">
+                    <label for="username">Username:</label>
+                </div>
+                <div class="box">   
+                    <input type="text" placeholder="Enter Username" name="username" class="username"><br>
+                </div>  
+            </div>
+            <div class="pass field">
+                <div class="lbl">   
+                    <label for="password">Password:</label>
+                </div>
+                <div class="box">
+                    <input type="text" placeholder="Enter Password" name="password" class="password"><br>
+                </div>
+            </div>
+            <div class="loginbutton">
+                <input type="submit" value="Login">
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
