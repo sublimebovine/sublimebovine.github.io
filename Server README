@@ -1,0 +1,10 @@
+You need to put your SQL password into the file before you run it.
+
+If on windows and you have node, run it with node server.js
+If you are on Linux idk.
+
+Also, if you are on windows, run these commands in the directory you are running server.js from.
+npm init -y
+npm install express sqlite3 bcrypt body-parser
+
+If you are on Linux idk.
