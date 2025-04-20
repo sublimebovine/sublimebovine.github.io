@@ -10,7 +10,7 @@ const app = express();
 const dbConfig = {
   host: 'localhost',
   user: 'root', // change if using a different user
-  password: 'c0decustard', // replace with your actual password
+  password: 'root', // replace with your actual password
   multipleStatements: true
 };
 
