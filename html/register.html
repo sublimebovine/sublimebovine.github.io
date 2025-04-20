@@ -117,7 +117,7 @@
         </div>
       </div>
       <div class="Registerbutton">
-        <input type="submit" value="Register">
+        <input type="submit" value="register">
       </div>
       <div id="message"></div>
     </form>
@@ -134,7 +134,7 @@
       const data = new URLSearchParams(formData);
 
       try {
-        const res = await fetch('/Register', {
+        const res = await fetch('/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: data
