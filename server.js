@@ -65,13 +65,16 @@ connection.connect(err => {
           if (results.length === 0) return res.status(401).send('Invalid credentials.');
 
           const user = results[0];
-          bcrypt.compare(password, user.password, (err, result) => {
-            if (result) {
-              res.send('✅ Login successful!');
-            } else {
-              res.status(401).send('❌ Incorrect password.');
-            }
-          });
+            if (err) return res.status(500).send('Error hashing password.');
+            bcrypt.compare(password, user.password, (err, result) => {
+              if (result) {
+                res.send('✅ Login successful!');
+              } else {
+                res.status(401).send('❌ Incorrect password.');
+              }
+            });
+          
+          
         });
       });
 
@@ -83,6 +86,7 @@ connection.connect(err => {
 
           const insertQuery = 'INSERT INTO users (username, password) VALUES (?, ?)';
           db.query(insertQuery, [username, hashedPassword], (err) => {
+            console.log(hashedPassword);
             if (err) {
               if (err.code === 'ER_DUP_ENTRY') {
                 return res.status(400).send('Username already taken.');
