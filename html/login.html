@@ -7,120 +7,94 @@
 
   <style>
     body {
-      background-image: url(../public/images/TestImage.png);
+      background-image: url(images/TestImage.png);
       background-position: center;
-
+      background-size: cover;
+      margin: 0;
+      font-family: 'Ubuntu', sans-serif;
     }
-
-    .field {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px;
-    }
-
-    .field > .box {
-      position: absolute;
-      width: 40%;
-      margin: 45%;
-    }
-
+  
     form {
       background-color: white;
       border: 2px solid rgba(0, 0, 0, 0.02);
       border-radius: 20px;
-      width: 60%;
-      margin: auto;
-      margin-top: 10%;
-      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      margin: 10% auto;
+      padding: 30px;
+      box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
     }
-
+  
+    .field {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+  
+    .field label {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  
     .username, .password {
-      width: 76%;
-      color: rgb(38, 50, 56);
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 1px;
-      background: rgba(136, 126, 126, 0.04);
-      padding: 10px 20px;
-      border: none;
+      width: 100%;
+      padding: 10px 15px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
       border-radius: 20px;
-      outline: none;
+      font-size: 14px;
+      text-align: center;
       box-sizing: border-box;
-      border: 2px solid rgba(0, 0, 0, 0.02);
-      margin-left: 46px;
-      text-align: center;
-      margin-bottom: 27px;
-      font-family: 'Ubuntu', sans-serif;
     }
-
-    .lbl {
-      margin-right: 80%;
-      padding-bottom: 25px;
-      font-family: 'Ubuntu', sans-serif;
-    }
-
+  
     .loginbutton {
-      text-align: center;
-      margin: 5px;
-    }
-
-    .loginbutton > input {
       display: flex;
       justify-content: center;
-      align-items: center;
-      padding: 0 20px;
-      width: 80%;
-      height: 50px;
-      background-color: #0077b6;
-      border-radius: 25px;
-      font-family: Ubuntu-Bold;
-      font-size: 15px;
-      color: #fff;
-      line-height: 1.2;
-      text-transform: uppercase;
-      border: 2px solid rgba(0, 0, 0, 0.02);
-      margin: auto;
-      cursor: pointer;
     }
-
+  
+    .loginbutton > input {
+      width: 100%;
+      max-width: 300px;
+      padding: 15px;
+      background-color: #0077b6;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+  
     #message {
       text-align: center;
-      font-family: 'Ubuntu', sans-serif;
       margin-top: 20px;
       font-weight: bold;
       color: red;
     }
-
+  
     #message.success {
       color: green;
     }
   </style>
+  
 </head>
 <body>
   <div>
     <form id="loginForm">
-      <div class="user field">
-        <div class="lbl">
-          <label for="username">Username:</label>
-        </div>
-        <div class="box">
-          <input type="text" placeholder="Enter Username" name="username" class="username" required><br>
-        </div>
+      <div class="field">
+        <label for="username">Username:</label>
+        <input type="text" placeholder="Enter Username" name="username" class="username" required>
       </div>
-      <div class="pass field">
-        <div class="lbl">
-          <label for="password">Password:</label>
-        </div>
-        <div class="box">
-          <input type="password" placeholder="Enter Password" name="password" class="password" required><br>
-        </div>
+      <div class="field">
+        <label for="password">Password:</label>
+        <input type="password" placeholder="Enter Password" name="password" class="password" required>
       </div>
       <div class="loginbutton">
         <input type="submit" value="Login">
       </div>
       <div id="message"></div>
-    </form>
+    </form>    
   </div>
 
   <script>
