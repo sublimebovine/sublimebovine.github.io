@@ -99,6 +99,10 @@ connection.connect(err => {
         });
       });
 
+      app.get('/logout', (req, res) => {
+  // In app you clear session or token here
+  res.send('👋 You have been logged out.');
+});   
       // Start server
       const PORT = 3000;
       app.listen(PORT, () => {
