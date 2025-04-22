@@ -52,9 +52,9 @@ connection.connect(err => {
       // Serve static assets (like CSS/images) from "public"
       app.use(express.static(path.join(__dirname, 'public')));
 
-       // Serve login.html manually from "pages" folder
+       // Serve index.html manually from "pages" folder
        app.get('/', (req, res) => {
-       res.sendFile(path.join(__dirname, 'html', 'login.html'));
+       res.sendFile(path.join(__dirname, 'html', 'index.html'));
        });
 
       app.post('/login', (req, res) => {
@@ -98,11 +98,10 @@ connection.connect(err => {
           });
         });
       });
-
       app.get('/logout', (req, res) => {
-  // In app you clear session or token here
-  res.send('👋 You have been logged out.');
-});   
+        // In app you clear session or token here
+        res.send('👋 You have been logged out.');
+      });   
       // Start server
       const PORT = 3000;
       app.listen(PORT, () => {
