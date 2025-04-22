@@ -49,12 +49,12 @@ connection.connect(err => {
 
       // Middleware & Routes
       app.use(bodyParser.urlencoded({ extended: true }));
-      // Serve static assets (like CSS/images) from "public"
+      // Serve oublic assets from "public"
       app.use(express.static(path.join(__dirname, 'public')));
 
-       // Serve index.html manually from "pages" folder
+       // Serve index.html manually from "public" folder
        app.get('/', (req, res) => {
-       res.sendFile(path.join(__dirname, 'html', 'index.html'));
+       res.sendFile(path.join(__dirname, 'public', 'index.html'));
        });
 
       app.post('/login', (req, res) => {
