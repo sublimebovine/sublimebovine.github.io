@@ -1,139 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Earth Engine Search</title>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjY3TDCL0By6QdJ_a1DQnLJTfL46_s-VI&libraries=places"></script>
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+        }
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+        #search-box {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            width: 300px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
 
-  <style>
-    body {
-      background-image: url(images/TestImage.png);
-      background-position: center;
-      background-size: cover;
-      margin: 0;
-      font-family: 'Ubuntu', sans-serif;
-    }
-  
-    form {
-      background-color: white;
-      border: 2px solid rgba(0, 0, 0, 0.02);
-      border-radius: 20px;
-      width: 90%;
-      max-width: 400px;
-      margin: 10% auto;
-      padding: 30px;
-      box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
-    }
-  
-    .field {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 25px;
-    }
-  
-    .field label {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-  
-    .username, .password {
-      width: 100%;
-      padding: 10px 15px;
-      border: 2px solid rgba(0, 0, 0, 0.1);
-      border-radius: 20px;
-      font-size: 14px;
-      text-align: center;
-      box-sizing: border-box;
-    }
-  
-    .loginbutton {
-      display: flex;
-      justify-content: center;
-    }
-  
-    .loginbutton > input {
-      width: 100%;
-      max-width: 300px;
-      padding: 15px;
-      background-color: #0077b6;
-      color: white;
-      font-size: 15px;
-      font-weight: bold;
-      border: none;
-      border-radius: 25px;
-      cursor: pointer;
-      text-transform: uppercase;
-    }
-  
-    #message {
-      text-align: center;
-      margin-top: 20px;
-      font-weight: bold;
-      color: red;
-    }
-  
-    #message.success {
-      color: green;
-    }
-  </style>
-  
+        #buttons{
+            position: fixed;
+            z-index: 1;
+            display: flex;
+
+            width: 100%;
+            justify-content: end;
+        }
+        button{
+            background-color: #0127E6;
+            border: 2px solid rgba(0, 0, 0, 0.02);
+            border-radius: 30px;
+            width: 100px;
+            cursor: pointer;
+            padding: 10px;
+            margin-right: 16px;
+            margin-top: 10px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+            font-size: 20px;
+            font-weight: bold;
+            color: #D3DFF0;
+        }
+        #register{
+            margin-right: 70px;
+        }
+    </style>
 </head>
 <body>
-  <div>
-    <form id="loginForm">
-      <div class="field">
-        <label for="username">Username:</label>
-        <input type="text" placeholder="Enter Username" name="username" class="username" required>
-      </div>
-      <div class="field">
-        <label for="password">Password:</label>
-        <input type="password" placeholder="Enter Password" name="password" class="password" required>
-      </div>
-      <div class="loginbutton">
-        <input type="submit" value="Login">
-      </div>
-      <div id="message"></div>
-    </form>    
-  </div>
+    <input id="search-box" type="text" placeholder="Search for a place...">
+    <div id="buttons"> 
+        <a href="login.html" id = "login">
+            <button>Login</button>
+        </a>
+        <a href="register.html" id = "register">
+            <button>Register</button>
+        </a>
+    </div>
+        
+    <div id="map"></div>
 
-  <script>
-    const form = document.getElementById('loginForm');
-    const messageDiv = document.getElementById('message');
+    <script>
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 0, lng: 0 },
+                zoom: 2,
+            });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // Stop normal form submission
+            const searchBox = new google.maps.places.SearchBox(document.getElementById("search-box"));
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById("search-box"));
 
-      const formData = new FormData(form);
-      const data = new URLSearchParams(formData);
-
-      try {
-        const res = await fetch('/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: data
-        });
-
-        const text = await res.text();
-
-        if (res.ok) {
-          messageDiv.textContent = text;
-          messageDiv.classList.remove('error');
-          messageDiv.classList.add('success');
-
-          // Optional: Redirect after 1.5s
-          // setTimeout(() => window.location.href = '/dashboard.html', 1500);
-        } else {
-          messageDiv.textContent = text;
-          messageDiv.classList.remove('success');
-          messageDiv.classList.add('error');
+            searchBox.addListener("places_changed", () => {
+                const places = searchBox.getPlaces();
+                if (places.length == 0) return;
+                
+                const place = places[0];
+                if (!place.geometry) return;
+                
+                map.setCenter(place.geometry.location);
+                map.setZoom(10);
+            });
         }
-      } catch (err) {
-        messageDiv.textContent = 'Server error.';
-        messageDiv.classList.remove('success');
-        messageDiv.classList.add('error');
-      }
-    });
-  </script>
+        
+        google.maps.event.addDomListener(window, "load", initMap);
+    </script>
 </body>
 </html>
