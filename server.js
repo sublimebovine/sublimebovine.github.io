@@ -118,6 +118,10 @@ connection.connect(err => {
   });
 });
 
+      app.get('/health', (req, res) => {
+  res.json({ status: '🟢 Server is running' });
+});
+
       // Start server
       const PORT = 3000;
       app.listen(PORT, () => {
