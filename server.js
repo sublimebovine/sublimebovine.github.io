@@ -107,6 +107,17 @@ connection.connect(err => {
   res.send('🔐 Welcome to your dashboard. (Simulated secure page)');
 });
 
+      app.get('/dashboard', (req, res) => {
+  res.send('🔐 Welcome to your dashboard. (Simulated secure page)');
+});
+
+      app.get('/users', (req, res) => {
+  db.query('SELECT username FROM users', (err, results) => {
+    if (err) return res.status(500).send('❌ Database error.');
+    res.json(results);
+  });
+});
+
       // Start server
       const PORT = 3000;
       app.listen(PORT, () => {
