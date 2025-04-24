@@ -101,7 +101,12 @@ connection.connect(err => {
       app.get('/logout', (req, res) => {
         // In app you clear session or token here
         res.send('👋 You have been logged out.');
-      });   
+      });
+
+      app.get('/dashboard', (req, res) => {
+  res.send('🔐 Welcome to your dashboard. (Simulated secure page)');
+});
+
       // Start server
       const PORT = 3000;
       app.listen(PORT, () => {
@@ -109,4 +114,3 @@ connection.connect(err => {
       });
     });
   });
-});
