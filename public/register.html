@@ -120,8 +120,14 @@
           messageDiv.classList.remove('error');
           messageDiv.classList.add('success');
 
-          // Optional redirect:
-          // setTimeout(() => window.location.href = '/login.html', 1500);
+
+          // Save login flag and redirect
+          localStorage.setItem('loggedIn', 'true');
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
+
+          
         } else {
           messageDiv.textContent = text;
           messageDiv.classList.remove('success');
