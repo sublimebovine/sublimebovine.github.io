@@ -104,23 +104,38 @@ connection.connect(err => {
       });
 
       app.get('/dashboard', (req, res) => {
-  res.send('Welcome to your dashboard. (Simulated secure page)');
-});
-
-      app.get('/dashboard', (req, res) => {
-  res.send('Welcome to your dashboard. (Simulated secure page)');
-});
+        res.send('Welcome to your dashboard. (Simulated secure page)');
+      });
 
       app.get('/users', (req, res) => {
-  db.query('SELECT username FROM users', (err, results) => {
-    if (err) return res.status(500).send('Database error.');
-    res.json(results);
-  });
-});
+        db.query('SELECT username FROM users', (err, results) => {
+          if (err) return res.status(500).send('Database error.');
+          res.json(results);
+          });
+      });
 
       app.get('/health', (req, res) => {
-  res.json({ status: 'Server is running' });
-});
+        res.json({ status: 'Server is running' });
+      });
+
+      app.get('/location/:name', (req, res) => {
+        const locationName = req.params.name;
+      
+        const query = `SELECT Rating, Lat, Lon FROM locations WHERE name = "${locationName}" `;
+        db.query(query, (err, results) => {
+      
+          if (results.length === 0) {
+            return res.status(404).send(`Location "${locationName}" not found.`);
+          }
+      
+          const location = results[0];
+          res.json({
+            Rating: location.Rating,
+            Lat: location.Lat,
+            Lon: location.Lon,
+          });
+        });
+      });
 
       // Start server
       const PORT = 3000;
