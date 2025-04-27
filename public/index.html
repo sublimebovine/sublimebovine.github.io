@@ -66,11 +66,49 @@
 let map;
 let markers = [];
 
-function initMap() {
+async function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 0, lng: 0 },
     zoom: 2,
   });
+  infoWindow= new google.maps.InfoWindow({mindWidth: 200, maxWidth:200})
+
+
+
+// ✅ Initial connection WITHOUT database (to create it if missing)
+function addmarker(lat,long){
+console.log("a")
+const marker = new google.maps.Marker({position: {lat: lat, lng: long },map: map});
+  function window(){
+    const windowdata='<div class ="feh-content"> </div>';
+      google.maps.event.addListener(marker, 'click', function(){
+      infoWindow.setContent(windowdata);
+      infoWindow.open(map, marker);
+  });}
+  window()
+}
+name = "RWH";
+    try {
+      const res = await fetch(`/location/${encodeURIComponent(name)}`);
+      if (!res.ok) {
+        alert('Location not found.');
+        return;
+      }
+      const data = await res.json();
+      console.log("out");
+      console.log(data);
+      console.log(data["results"][0]);
+      console.log(Object.keys(data["results"]).length)
+      for(let i =0; i<Object.keys(data["results"]).length;i++){
+        console.log(data["results"][i].Lat);
+        addmarker(parseFloat(data["results"][i].Lat),parseFloat(data["results"][i].Lon));
+      }
+    } catch (err) {
+      console.error('Error fetching location:', err);
+      alert('Error loading location.');
+    }
+
+    
 
   
 
@@ -110,20 +148,7 @@ function initMap() {
     });
     map.fitBounds(bounds);
 
-    name = "Faded";
-    try {
-      const res = await fetch(`/location/${encodeURIComponent(name)}`);
-      if (!res.ok) {
-        alert('Location not found.');
-        return;
-      }
-      const data = await res.json();
-      console.log(data);
-    } catch (err) {
-      console.error('Error fetching location:', err);
-      alert('Error loading location.');
-    }
-    
+
 
   });
   
