@@ -1,9 +1,9 @@
-const express = require('express');
+
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const path = require('path');
-
+const express = require('express');
 const app = express();
 
 // Initial connection 
@@ -14,7 +14,6 @@ const dbConfig = {
   multipleStatements: true
 };
 
-// Connect to MySQL server
 const connection = mysql.createConnection(dbConfig);
 
 connection.connect(err => {
@@ -56,6 +55,7 @@ connection.connect(err => {
        app.get('/', (req, res) => {
        res.sendFile(path.join(__dirname, 'public', 'index.html'));
        });
+
 
       app.post('/login', (req, res) => {
         const { username, password } = req.body;
@@ -104,38 +104,39 @@ connection.connect(err => {
       });
 
       app.get('/dashboard', (req, res) => {
-        res.send('Welcome to your dashboard. (Simulated secure page)');
-      });
+  res.send('Welcome to your dashboard. (Simulated secure page)');
+});
+
+      app.get('/dashboard', (req, res) => {
+  res.send('Welcome to your dashboard. (Simulated secure page)');
+});
 
       app.get('/users', (req, res) => {
-        db.query('SELECT username FROM users', (err, results) => {
-          if (err) return res.status(500).send('Database error.');
-          res.json(results);
-          });
-      });
+  db.query('SELECT username FROM users', (err, results) => {
+    if (err) return res.status(500).send('Database error.');
+    res.json(results);
+  });
+});
 
       app.get('/health', (req, res) => {
-        res.json({ status: 'Server is running' });
-      });
+  res.json({ status: 'Server is running' });
+});
+app.get('/location/:name', (req, res) => {
+  const locationName = req.params.name;
 
-      app.get('/location/:name', (req, res) => {
-        const locationName = req.params.name;
-      
-        const query = `SELECT Rating, Lat, Lon FROM locations WHERE name = "${locationName}" `;
-        db.query(query, (err, results) => {
-      
-          if (results.length === 0) {
-            return res.status(404).send(`Location "${locationName}" not found.`);
-          }
-      
-          const location = results[0];
-          res.json({
-            Rating: location.Rating,
-            Lat: location.Lat,
-            Lon: location.Lon,
-          });
-        });
-      });
+  const query = 'SELECT Rating, Lat, Lon FROM locations';
+  db.query(query, [locationName], (err, results) => {
+
+    if (results.length === 0) {
+      return res.status(404).send('Location "${locationName}" not found.');
+    }
+
+    const location = results;
+    res.json({
+      results: results
+    });
+  });
+}); 
 
       // Start server
       const PORT = 3000;
