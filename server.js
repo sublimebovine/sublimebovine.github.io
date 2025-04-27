@@ -6,7 +6,7 @@ const path = require('path');
 
 const app = express();
 
-// ✅ Initial connection WITHOUT database (to create it if missing)
+// Initial connection 
 const dbConfig = {
   host: 'localhost',
   user: 'root', // change if using a different user
@@ -14,26 +14,26 @@ const dbConfig = {
   multipleStatements: true
 };
 
-// Step 1: Connect to MySQL server (no DB yet)
+// Connect to MySQL server
 const connection = mysql.createConnection(dbConfig);
 
 connection.connect(err => {
   if (err) throw err;
   console.log('Connected to MySQL server.');
 
-  // Step 2: Create database if it doesn't exist
+  // Create database if it doesn't exist
   connection.query('CREATE DATABASE IF NOT EXISTS login_db', (err) => {
     if (err) throw err;
     console.log('Database ensured: login_db');
 
-    // Step 3: Connect to login_db
+    // Connect to login_db
     const db = mysql.createConnection({ ...dbConfig, database: 'login_db' });
 
     db.connect(err => {
       if (err) throw err;
       console.log('Connected to login_db');
 
-      // Step 4: Create users table if it doesn't exist
+      // Create users table if it doesn't exist
       const createTableQuery = `
         CREATE TABLE IF NOT EXISTS users (
           id INT AUTO_INCREMENT PRIMARY KEY,
@@ -68,9 +68,9 @@ connection.connect(err => {
             if (err) return res.status(500).send('Error hashing password.');
             bcrypt.compare(password, user.password, (err, result) => {
               if (result) {
-                res.send('✅ Login successful!');
+                res.send('Login successful!');
               } else {
-                res.status(401).send('❌ Incorrect password.');
+                res.status(401).send('Incorrect password.');
               }
             });
           
@@ -94,32 +94,32 @@ connection.connect(err => {
                 return res.status(500).send('Database error.');
               }
             }
-            res.send('✅ Registration successful.');
+            res.send('Registration successful.');
           });
         });
       });
       app.get('/logout', (req, res) => {
         // In app you clear session or token here
-        res.send('👋 You have been logged out.');
+        res.send('You have been logged out.');
       });
 
       app.get('/dashboard', (req, res) => {
-  res.send('🔐 Welcome to your dashboard. (Simulated secure page)');
+  res.send('Welcome to your dashboard. (Simulated secure page)');
 });
 
       app.get('/dashboard', (req, res) => {
-  res.send('🔐 Welcome to your dashboard. (Simulated secure page)');
+  res.send('Welcome to your dashboard. (Simulated secure page)');
 });
 
       app.get('/users', (req, res) => {
   db.query('SELECT username FROM users', (err, results) => {
-    if (err) return res.status(500).send('❌ Database error.');
+    if (err) return res.status(500).send('Database error.');
     res.json(results);
   });
 });
 
       app.get('/health', (req, res) => {
-  res.json({ status: '🟢 Server is running' });
+  res.json({ status: 'Server is running' });
 });
 
       // Start server
@@ -129,3 +129,4 @@ connection.connect(err => {
       });
     });
   });
+});
