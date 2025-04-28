@@ -140,33 +140,45 @@ connection.connect(err => {
   }); 
 
 //reviews to go with reviews.html
-      app.get('/reviews', (req, res) => {
-  db.query('SELECT * FROM reviews ORDER BY id DESC', (err, results) => {
+app.get('/reviews', (req, res) => {
+  connection.query('USE login_db', (err) => {
     if (err) {
-      console.error('Error fetching reviews:', err);
-      return res.status(500).send('Error fetching reviews.');
+      console.error('Error switching database:', err);
+      return res.status(500).send('Error switching database.');
     }
-    res.json(results);
+    connection.query('SELECT * FROM reviews ORDER BY id DESC', (err, results) => {
+      if (err) {
+        console.error('Error fetching reviews:', err);
+        return res.status(500).send('Error fetching reviews.');
+      }
+      res.json(results);
+    });
   });
 });
 
 app.post('/addReview', (req, res) => {
   const { name, code, text, rating } = req.body;
-  const username = 'test';
+  const username = 'test'; // hardcoded for now
 
-  const insertReview = `
-    INSERT INTO reviews (User, Text, Rating, Code, Name)
-    VALUES (?, ?, ?, ?, ?)
-  `;
-
-  db.query(insertReview, [username, text, rating, code, name], (err, result) => {
+  connection.query('USE login_db', (err) => {
     if (err) {
-      console.error('Error adding review:', err);
-      return res.status(500).send('Error adding review.');
+      console.error('Error switching database:', err);
+      return res.status(500).send('Error switching database.');
     }
-    res.send('Review added successfully.');
+    const insertReview = `
+      INSERT INTO reviews (User, Text, Rating, Code, Name)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    connection.query(insertReview, [username, text, rating, code, name], (err, result) => {
+      if (err) {
+        console.error('Error adding review:', err);
+        return res.status(500).send('Error adding review.');
+      }
+      res.send('Review added successfully.');
+    });
   });
 });
+
 
 
       
