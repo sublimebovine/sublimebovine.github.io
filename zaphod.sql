@@ -52,7 +52,7 @@ CREATE TABLE `locations` (
   `Lat` decimal(10,2) DEFAULT NULL,
   `Lon` decimal(10,2) DEFAULT NULL,
   `Rating` int DEFAULT NULL,
-  `Reviews` varchar(255) DEFAULT NULL
+  `Reviews` varchar(255) DEFAULT NULL,
   `Description` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
