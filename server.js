@@ -48,8 +48,9 @@ connection.connect(err => {
 
       // Middleware & Routes
       app.use(bodyParser.urlencoded({ extended: true }));
-      // Serve oublic assets from "public"
+      app.use(bodyParser.json());
       app.use(express.static(path.join(__dirname, 'public')));
+
 
        // Serve index.html manually from "public" folder
        app.get('/', (req, res) => {
