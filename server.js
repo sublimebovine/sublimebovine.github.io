@@ -121,22 +121,23 @@ connection.connect(err => {
       app.get('/health', (req, res) => {
   res.json({ status: 'Server is running' });
 });
-app.get('/location/:name', (req, res) => {
-  const locationName = req.params.name;
+      
+  app.get('/location/:name', (req, res) => {
+    const locationName = req.params.name;
 
-  const query = 'SELECT Rating, Lat, Lon FROM locations';
-  db.query(query, [locationName], (err, results) => {
+    const query = 'SELECT name, Rating, Lat, Lon,Description FROM locations';
+    db.query(query, [locationName], (err, results) => {
 
-    if (results.length === 0) {
-      return res.status(404).send('Location "${locationName}" not found.');
-    }
+      if (results.length === 0) {
+        return res.status(404).send('Location "${locationName}" not found.');
+      }
 
-    const location = results;
-    res.json({
-      results: results
+      const location = results;
+      res.json({
+        results: results
+      });
     });
-  });
-}); 
+  }); 
 
 //reviews to go with reviews.html
       app.get('/reviews', (req, res) => {
