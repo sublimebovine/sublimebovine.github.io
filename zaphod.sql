@@ -52,7 +52,8 @@ CREATE TABLE `locations` (
   `Lat` decimal(10,2) DEFAULT NULL,
   `Lon` decimal(10,2) DEFAULT NULL,
   `Rating` int DEFAULT NULL,
-  `Reviews` varchar(255) DEFAULT NULL
+  `Reviews` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -101,7 +102,8 @@ CREATE TABLE `users` (
   `username` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `premium` char(1) DEFAULT NULL,
-  `confidence` int DEFAULT NULL
+  `confidence` int DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -111,7 +113,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('test','$2b$10$cIuR3LImLSAQPIhm0WEBYey7f2WtV8KoPYnYhFVrLpsWqYedEj3e6',NULL,NULL),('test2','$2b$10$bc4J24JnwYG.ANoiS1Up9.mtPJWbmHTLPV9MIBNj4Uzu64DNdQhEe',NULL,NULL);
+INSERT INTO `users` VALUES ('test','$2b$10$cIuR3LImLSAQPIhm0WEBYey7f2WtV8KoPYnYhFVrLpsWqYedEj3e6',NULL,NULL,NULL),('test2','$2b$10$bc4J24JnwYG.ANoiS1Up9.mtPJWbmHTLPV9MIBNj4Uzu64DNdQhEe',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

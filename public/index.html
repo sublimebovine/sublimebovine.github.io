@@ -51,114 +51,38 @@
   </style>
 </head>
 <body>
-
-<input id="search-box" type="text" placeholder="Search for a place...">
-
-<div id="buttons">
-  <a href="login.html" id="login"><button id="loginBtn">Login</button></a>
-  <a href="register.html" id="register"><button id="registerBtn">Register</button></a>
-  <button id="logoutBtn" style="display:none;">Logout</button>
-</div>
+  <input id="search-box" type="text" placeholder="Search for a place...">
+  
+  <div id="buttons">
+    <a href="login.html" id="login"><button id="loginBtn">Login</button></a>
+    <a href="register.html" id="register"><button id="registerBtn">Register</button></a>
+    <button id="logoutBtn" style="display: none;">Logout</button>
+  </div>
 
 <div id="map"></div>
 
-<script>
-let map;
-let markers = [];
+  <script>
+    // Setup map
+    function initMap() {
+      const map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 0, lng: 0 },
+        zoom: 2,
+      });
 
-async function initMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 0, lng: 0 },
-    zoom: 2,
-  });
-  infoWindow= new google.maps.InfoWindow({mindWidth: 200, maxWidth:200})
+      const searchBox = new google.maps.places.SearchBox(document.getElementById("search-box"));
+      map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById("search-box"));
 
-
-
-// ✅ Initial connection WITHOUT database (to create it if missing)
-function addmarker(lat,long,rating,name,Description){
-console.log("a")
-const marker = new google.maps.Marker({position: {lat: lat, lng: long },map: map});
-  function window(){
-    str1='<div class ="feh-content"> <img src="'
-    str2='s.png" alt="stars" width="100" height="50">'
-    num='5'
-    name=' <h1>'+name+'</h1>'
-    description=' <p>'+Description+'</p>'
-    str3= ' </div>'
-    const windowdata=str1+num+str2+name+description+str3;
-      google.maps.event.addListener(marker, 'click', function(){
-      infoWindow.setContent(windowdata);
-      infoWindow.open(map, marker);
-  });}
-  window()
-}
-name = "RWH";
-    try {
-      const res = await fetch(`/location/${encodeURIComponent(name)}`);
-      if (!res.ok) {
-        alert('Location not found.');
-        return;
-      }
-      const data = await res.json();
-      console.log("out");
-      console.log(data);
-      console.log(data["results"][0]);
-      console.log(Object.keys(data["results"]).length)
-      for(let i =0; i<Object.keys(data["results"]).length;i++){
-        console.log(data["results"][i].Lat);
-        addmarker(parseFloat(data["results"][i].Lat),parseFloat(data["results"][i].Lon),data["results"][i].rating,data["results"][i].name,data["results"][i].Description);
-      }
-    } catch (err) {
-      console.error('Error fetching location:', err);
-      alert('Error loading location.');
+      searchBox.addListener("places_changed", () => {
+        const places = searchBox.getPlaces();
+        if (places.length == 0) return;
+        
+        const place = places[0];
+        if (!place.geometry) return;
+        
+        map.setCenter(place.geometry.location);
+        map.setZoom(10);
+      });
     }
-
-    
-
-  
-
-  const input = document.getElementById("search-box");
-  const searchBox = new google.maps.places.SearchBox(input);
-
-  map.addListener("bounds_changed", () => {
-    searchBox.setBounds(map.getBounds());
-  });
-
-  searchBox.addListener("places_changed", async () => {
-    const places = searchBox.getPlaces();
-    if (!places.length) return;
-
-    
-
-
-    // clear previous
-    markers.forEach(m => m.setMap(null));
-    markers = [];
-
-    const bounds = new google.maps.LatLngBounds();
-    places.forEach(p => {
-      if (!p.geometry || !p.geometry.location) return;
-
-      markers.push(new google.maps.Marker({
-        map,
-        title: p.name,
-        position: p.geometry.location,
-      }));
-
-      if (p.geometry.viewport) {
-        bounds.union(p.geometry.viewport);
-      } else {
-        bounds.extend(p.geometry.location);
-      }
-    });
-    map.fitBounds(bounds);
-
-
-
-  });
-  
-}
 
 google.maps.event.addDomListener(window, "load", initMap);
 
