@@ -5,120 +5,184 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google Earth Engine Search</title>
   <script src="https://apis.google.com/js/api.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjY3TDCL0By6QdJ_a1DQnLJTfL46_s-VI&libraries=places"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAGM_vPWCvl3L0h1DyB0vOk-aLA9dXp7Gs&libraries=places"></script>
   <style>
-    body {
-      font-family: 'Ubuntu', sans-serif;
+    body { font-family: 'Ubuntu', sans-serif; }
+    #map { 
+      height: 100vh; 
+      width: 100%; 
     }
-
-    #map {
-      height: 100vh;
-      width: 100%;
-    }
-
     #search-box {
       position: absolute;
-      top: 10px;
+      top: 10px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 5; width: 300px;
+    }
+    input {
+      width: 100%; padding: 10px; font-size: 16px;
+    }
+    #buttons {
+      position: fixed; z-index: 1;
+      display: flex; width: 100%;
+      justify-content: end;
+    }
+    button {
+      background-color: #0127E6;
+      border-radius: 30px;
+      width: 100px; padding: 10px;
+      margin-right: 16px; margin-top: 10px;
+      font-size: 20px; font-weight: bold;
+      color: #D3DFF0; cursor: pointer;
+      box-shadow: 0px 5px 20px rgba(0,0,0,0.2);
+      border: 2px solid rgba(0,0,0,0.02);
+    }
+
+    #locationSearchBtn {
+      position: absolute;
+      top: 100px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 5;
-      width: 300px;
+      padding: 5px 15px;
+      font-size: 14px;
     }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-    }
-
-    #buttons {
-      position: fixed;
-      z-index: 1;
-      display: flex;
-      width: 100%;
-      justify-content: end;
-    }
-
-    button {
-      background-color: #0127E6;
-      border: 2px solid rgba(0, 0, 0, 0.02);
-      border-radius: 30px;
-      width: 100px;
-      cursor: pointer;
-      padding: 10px;
-      margin-right: 16px;
-      margin-top: 10px;
-      box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
-      font-size: 20px;
-      font-weight: bold;
-      color: #D3DFF0;
-    }
-
-    #register {
-      margin-right: 70px;
-    }
-
-    #logoutBtn{
-      margin-right: 70px;
-    }
+    #register, #logoutBtn { margin-right: 70px; }
   </style>
 </head>
 <body>
-  <input id="search-box" type="text" placeholder="Search for a place...">
+
+<input id="search-box" type="text" placeholder="Search for a place...">
+
+<div id="buttons">
+  <a href="login.html" id="login"><button id="loginBtn">Login</button></a>
+  <a href="register.html" id="register"><button id="registerBtn">Register</button></a>
+  <button id="logoutBtn" style="display:none;">Logout</button>
+</div>
+
+<div id="map"></div>
+
+<script>
+let map;
+let markers = [];
+
+async function initMap() {
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 0, lng: 0 },
+    zoom: 2,
+  });
+  infoWindow= new google.maps.InfoWindow({mindWidth: 200, maxWidth:200})
+
+
+
+// ✅ Initial connection WITHOUT database (to create it if missing)
+function addmarker(lat,long,rating,name,Description){
+console.log("a")
+const marker = new google.maps.Marker({position: {lat: lat, lng: long },map: map});
+  function window(){
+    str1='<div class ="feh-content"> <img src="'
+    str2='s.png" alt="stars" width="100" height="50">'
+    num='5'
+    name=' <h1>'+name+'</h1>'
+    description=' <p>'+Description+'</p>'
+    str3= ' </div>'
+    const windowdata=str1+num+str2+name+description+str3;
+      google.maps.event.addListener(marker, 'click', function(){
+      infoWindow.setContent(windowdata);
+      infoWindow.open(map, marker);
+  });}
+  window()
+}
+name = "RWH";
+    try {
+      const res = await fetch(`/location/${encodeURIComponent(name)}`);
+      if (!res.ok) {
+        alert('Location not found.');
+        return;
+      }
+      const data = await res.json();
+      console.log("out");
+      console.log(data);
+      console.log(data["results"][0]);
+      console.log(Object.keys(data["results"]).length)
+      for(let i =0; i<Object.keys(data["results"]).length;i++){
+        console.log(data["results"][i].Lat);
+        addmarker(parseFloat(data["results"][i].Lat),parseFloat(data["results"][i].Lon),data["results"][i].rating,data["results"][i].name,data["results"][i].Description);
+      }
+    } catch (err) {
+      console.error('Error fetching location:', err);
+      alert('Error loading location.');
+    }
+
+    
+
   
-  <div id="buttons">
-    <a href="login.html" id="login"><button id="loginBtn">Login</button></a>
-    <a href="register.html" id="register"><button id="registerBtn">Register</button></a>
-    <button id="logoutBtn" style="display: none;">Logout</button>
-  </div>
 
-  <div id="map"></div>
+  const input = document.getElementById("search-box");
+  const searchBox = new google.maps.places.SearchBox(input);
 
-  <script>
-    // Setup map
-    function initMap() {
-      const map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 0, lng: 0 },
-        zoom: 2,
-      });
+  map.addListener("bounds_changed", () => {
+    searchBox.setBounds(map.getBounds());
+  });
 
-      const searchBox = new google.maps.places.SearchBox(document.getElementById("search-box"));
-      map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById("search-box"));
+  searchBox.addListener("places_changed", async () => {
+    const places = searchBox.getPlaces();
+    if (!places.length) return;
 
-      searchBox.addListener("places_changed", () => {
-        const places = searchBox.getPlaces();
-        if (places.length == 0) return;
-        
-        const place = places[0];
-        if (!place.geometry) return;
-        
-        map.setCenter(place.geometry.location);
-        map.setZoom(10);
-      });
-    }
+    
 
-    google.maps.event.addDomListener(window, "load", initMap);
 
-    // Handle login state
-    const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
-    const loginBtn = document.getElementById('loginBtn');
-    const registerBtn = document.getElementById('registerBtn');
-    const login = document.getElementById('login');
-    const register = document.getElementById('register');
-    const logoutBtn = document.getElementById('logoutBtn');
+    // clear previous
+    markers.forEach(m => m.setMap(null));
+    markers = [];
 
-    if (isLoggedIn) {
-      loginBtn.style.display = 'none';
-      registerBtn.style.display = 'none';
-      login.style.display = 'none';
-      register.style.display = 'none';
-      logoutBtn.style.display = 'inline-block';
-    }
+    const bounds = new google.maps.LatLngBounds();
+    places.forEach(p => {
+      if (!p.geometry || !p.geometry.location) return;
 
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('loggedIn');
-      location.reload(); // Refresh to reset UI
+      markers.push(new google.maps.Marker({
+        map,
+        title: p.name,
+        position: p.geometry.location,
+      }));
+
+      if (p.geometry.viewport) {
+        bounds.union(p.geometry.viewport);
+      } else {
+        bounds.extend(p.geometry.location);
+      }
     });
-  </script>
+    map.fitBounds(bounds);
+
+
+
+  });
+  
+}
+
+google.maps.event.addDomListener(window, "load", initMap);
+
+// login/logout swap
+const isLoggedIn = localStorage.getItem('loggedIn') === 'true';
+const loginBtn = document.getElementById('loginBtn');
+const registerBtn = document.getElementById('registerBtn');
+const login = document.getElementById('login');
+const register = document.getElementById('register');
+const logoutBtn = document.getElementById('logoutBtn');
+
+if (isLoggedIn) {
+  loginBtn.style.display = 'none';
+  registerBtn.style.display = 'none';
+  login.style.display = 'none';
+  register.style.display = 'none';
+  logoutBtn.style.display = 'inline-block';
+}
+
+logoutBtn.addEventListener('click', () => {
+  localStorage.removeItem('loggedIn');
+  location.reload();
+});
+</script>
+
 </body>
 </html>
