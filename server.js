@@ -138,6 +138,37 @@ app.get('/location/:name', (req, res) => {
   });
 }); 
 
+//reviews to go with reviews.html
+      app.get('/reviews', (req, res) => {
+  db.query('SELECT * FROM reviews ORDER BY id DESC', (err, results) => {
+    if (err) {
+      console.error('Error fetching reviews:', err);
+      return res.status(500).send('Error fetching reviews.');
+    }
+    res.json(results);
+  });
+});
+
+app.post('/addReview', (req, res) => {
+  const { name, code, text, rating } = req.body;
+  const username = 'test';
+
+  const insertReview = `
+    INSERT INTO reviews (User, Text, Rating, Code, Name)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  db.query(insertReview, [username, text, rating, code, name], (err, result) => {
+    if (err) {
+      console.error('Error adding review:', err);
+      return res.status(500).send('Error adding review.');
+    }
+    res.send('Review added successfully.');
+  });
+});
+
+
+      
       // Start server
       const PORT = 3000;
       app.listen(PORT, () => {
