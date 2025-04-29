@@ -84,41 +84,6 @@
 let map;
 let markers = [];
 
-async function initMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 0, lng: 0 },
-    zoom: 2,
-  });
-  infoWindow= new google.maps.InfoWindow({mindWidth: 200, maxWidth:200})
-
-function loadWeatherScript() {
-  const script = document.createElement('script');
-  script.src = '/js/weather-service.js'; // You'll need to create this file
-  document.body.appendChild(script);
-}
-loadWeatherScript();
-
-function addmarker(lat, long, rating, name, Description){
-  const marker = new google.maps.Marker({position: {lat: lat, lng: long }, map: map});
-  function window(){
-    str1='<div class ="feh-content"> <img src="'
-    str2='s.png" alt="stars" width="100" height="50">'
-    num='5'
-    name=' <h1>'+name+'</h1>'
-    description=' <p>'+Description+'</p>'
-    str3= '</div>'
-    const windowdata=str1+num+str2+name+description+str3;
-    
-    google.maps.event.addListener(marker, 'click', function(){
-      infoWindow.setContent(windowdata);
-      infoWindow.open(map, marker);
-      
-      fetchAndDisplayWeather(lat, long, name);
-    });
-  }
-  window();
-}
-
 async function fetchAndDisplayWeather(lat, lon, locationName) {
   try {
     const weatherContainer = document.getElementById('weather-container');
@@ -156,30 +121,33 @@ async function saveWeatherToDatabase(lat, lon, weatherData) {
   }
 }
 
-name = "RWH";
-    try {
-      const res = await fetch(`/location/${encodeURIComponent(name)}`);
-      if (!res.ok) {
-        alert('Location not found.');
-        return;
-      }
-      const data = await res.json();
-      console.log("out");
-      console.log(data);
-      console.log(data["results"][0]);
-      console.log(Object.keys(data["results"]).length)
-      for(let i =0; i<Object.keys(data["results"]).length;i++){
-        console.log(data["results"][i].Lat);
-        addmarker(parseFloat(data["results"][i].Lat),parseFloat(data["results"][i].Lon),data["results"][i].rating,data["results"][i].name,data["results"][i].Description);
-      }
-    } catch (err) {
-      console.error('Error fetching location:', err);
-      alert('Error loading location.');
+async function initMap() {
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 0, lng: 0 },
+    zoom: 2,
+  });
+  infoWindow = new google.maps.InfoWindow({mindWidth: 200, maxWidth:200});
+
+  name = "RWH";
+  try {
+    const res = await fetch(`/location/${encodeURIComponent(name)}`);
+    if (!res.ok) {
+      alert('Location not found.');
+      return;
     }
-
-    
-
-  
+    const data = await res.json();
+    console.log("out");
+    console.log(data);
+    console.log(data["results"][0]);
+    console.log(Object.keys(data["results"]).length)
+    for(let i =0; i<Object.keys(data["results"]).length;i++){
+      console.log(data["results"][i].Lat);
+      addmarker(parseFloat(data["results"][i].Lat),parseFloat(data["results"][i].Lon),data["results"][i].rating,data["results"][i].name,data["results"][i].Description);
+    }
+  } catch (err) {
+    console.error('Error fetching location:', err);
+    alert('Error loading location.');
+  }
 
   const input = document.getElementById("search-box");
   const searchBox = new google.maps.places.SearchBox(input);
@@ -191,9 +159,6 @@ name = "RWH";
   searchBox.addListener("places_changed", async () => {
     const places = searchBox.getPlaces();
     if (!places.length) return;
-
-    
-
 
     // clear previous
     markers.forEach(m => m.setMap(null));
@@ -216,11 +181,35 @@ name = "RWH";
       }
     });
     map.fitBounds(bounds);
-
-
-
   });
-  
+}
+
+function loadWeatherScript() {
+  const script = document.createElement('script');
+  script.src = '/js/weather-service.js';
+  document.body.appendChild(script);
+}
+loadWeatherScript();
+
+function addmarker(lat, long, rating, name, Description){
+  const marker = new google.maps.Marker({position: {lat: lat, lng: long }, map: map});
+  function window(){
+    str1='<div class ="feh-content"> <img src="'
+    str2='s.png" alt="stars" width="100" height="50">'
+    num='5'
+    name=' <h1>'+name+'</h1>'
+    description=' <p>'+Description+'</p>'
+    str3= '</div>'
+    const windowdata=str1+num+str2+name+description+str3;
+    
+    google.maps.event.addListener(marker, 'click', function(){
+      infoWindow.setContent(windowdata);
+      infoWindow.open(map, marker);
+      
+      fetchAndDisplayWeather(lat, long, name);
+    });
+  }
+  window();
 }
 
 google.maps.event.addDomListener(window, "load", initMap);
