@@ -1,3 +1,4 @@
+app.use(express.static('public'));
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');

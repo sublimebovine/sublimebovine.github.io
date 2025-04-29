@@ -184,12 +184,7 @@ async function initMap() {
   });
 }
 
-function loadWeatherScript() {
-  const script = document.createElement('script');
-  script.src = '/js/weather-service.js';
-  document.body.appendChild(script);
-}
-loadWeatherScript();
+
 
 function addmarker(lat, long, rating, name, Description){
   const marker = new google.maps.Marker({position: {lat: lat, lng: long }, map: map});
@@ -247,6 +242,7 @@ document.getElementById('test-weather').addEventListener('click', async () => {
   }
 });
 </script>
+<script defer src="js/weather-service.js"></script>
 
 </body>
 </html>

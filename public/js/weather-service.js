@@ -1,4 +1,4 @@
-const WEATHER_API_KEY = ''; 
+const WEATHER_API_KEY = '40f45cbd25778f84596c05c8eb1729c4'; 
 
 async function getWeather(lat, lon) {
   try {
