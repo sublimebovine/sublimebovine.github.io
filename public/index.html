@@ -162,7 +162,7 @@ async function initMap() {
     console.log(Object.keys(data["results"]).length)
     for(let i =0; i<Object.keys(data["results"]).length;i++){
       console.log(data["results"][i].Lat);
-      addmarker(parseFloat(data["results"][i].Lat),parseFloat(data["results"][i].Lon),data["results"][i].rating,data["results"][i].name,data["results"][i].Description);
+      addmarker(parseFloat(data["results"][i].Lat),parseFloat(data["results"][i].Lon),data["results"][i].Rating,data["results"][i].name,data["results"][i].Description);
     }
   } catch (err) {
     console.error('Error fetching location:', err);
@@ -217,7 +217,7 @@ function addmarker(lat, long, rating, name, Description){
   function window(){
     str1='<div class ="feh-content"> <img src="'
     str2='s.png" alt="stars" width="100" height="50">'
-    num='5'
+    num=rating.toString()
     name=' <h1>'+name+'</h1>'
     description=' <p>'+Description+'</p>'
     str3= '</div>'
