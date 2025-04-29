@@ -65,11 +65,10 @@
 
 <h1>Reviews</h1>
 
+//reviews list
 <div id="reviews-list">
-  <!-- Reviews will be inserted here -->
 </div>
 
-<!-- Add New Review -->
 <div id="new-review-form" style="display:none;">
   <h2>Submit a New Review</h2>
   <form id="reviewForm">
@@ -88,12 +87,6 @@
   </form>
 </div>
 
-<h2>Reviews</h2>
-<div id="reviews-list">
-  <!-- reviews will be inserted here -->
-</div>
-  
-  
 <script>
 async function loadReviews() {
   try {
@@ -120,7 +113,6 @@ async function loadReviews() {
 document.addEventListener('DOMContentLoaded', () => {
   loadReviews();
 
-  // Check if logged in
   const loggedIn = localStorage.getItem('loggedIn') === 'true';
   if (loggedIn) {
     document.getElementById('new-review-form').style.display = 'block';
@@ -157,6 +149,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
-
 </body>
 </html>
