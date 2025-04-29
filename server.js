@@ -153,7 +153,25 @@ app.post('/submit_email', (req, res) => {
   });
 });
 
+//premium feature
+app.post('/submit_email', async (req, res) => {
+  const { username, email, password } = req.body;
 
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+    db.query(query, [username, email, hashedPassword], (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).send('Error saving to database');
+      }
+      res.send('Thanks for purchasing Premium!');
+    });
+  } catch (error) {
+    console.error('Error hashing password:', error);
+    res.status(500).send('Error processing request');
+  }
+});
       
 
       app.get('/health', (req, res) => {
