@@ -216,10 +216,10 @@ function addmarker(lat, long, rating, name, Description){
   const marker = new google.maps.Marker({position: {lat: lat, lng: long }, map: map});
   function window(){
     str1='<div class ="feh-content"> <img src="'
-    str2='s.png" alt="stars" width="100" height="50">'
+    str2='s.png" alt="stars" width="100" height="50">  <h1>'
     num=rating.toString()
-    name=' <h1>'+name+'</h1>'
-    description=' <p>'+Description+'</p>'
+    name=name
+    description='</h1> <p>'+Description+'</p>'
     str3= '</div>'
     const windowdata=str1+num+str2+name+description+str3;
     
