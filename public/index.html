@@ -76,7 +76,11 @@
   <button id="logoutBtn" style="display:none;">Logout</button>
 </div>
 
-<button id="test-weather" style="position: absolute; top: 150px; left: 10px; z-index: 10; background-color: #f44336; color: white;">Test Weather</button>
+<button id="pickWeatherBtn"
+         style="position: absolute; top: 10px; left: 10px; 
+         z-index: 9999; padding: 6px 14px; 
+         background-color: #2196f3; color: white; border: none;
+         border-radius: 6px; font-weight:600; cursor: pointer;">Pick weather</button>
 
 <div id="map"></div>
 
@@ -221,6 +225,14 @@ const registerBtn = document.getElementById('registerBtn');
 const login = document.getElementById('login');
 const register = document.getElementById('register');
 const logoutBtn = document.getElementById('logoutBtn');
+
+document.addEventListener("DOMContentLoaded", () => {
+  const weatherbutton = document.getElementById("pickWeatherBtn");
+  weatherbutton.addEventListener("click",() => {
+    alert("Button Clicked");
+  });
+});
+
 
 if (isLoggedIn) {
   loginBtn.style.display = 'none';
