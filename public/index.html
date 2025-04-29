@@ -85,6 +85,7 @@
 <div id="map"></div>
 
 <script>
+let pickMode = false; 
 let map;
 let markers = [];
 
@@ -130,6 +131,21 @@ async function initMap() {
     center: { lat: 0, lng: 0 },
     zoom: 2,
   });
+  map.addListener("click", async (mapsMouseEvent) => {
+  if (!pickMode) return;
+
+  const lat = mapsMouseEvent.latLng.lat();
+  const lng = mapsMouseEvent.latLng.lng();
+
+  const geocoder = new google.maps.Geocoder();
+  geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+    const locationName = (status === "OK" && results[0]) ? results[0].formatted_address : `Lat: ${lat}, Lon: ${lng}`;
+    fetchAndDisplayWeather(lat, lng, locationName);
+  });
+
+  pickMode = false;
+  map.setOptions({ draggableCursor: '' });
+});
   infoWindow = new google.maps.InfoWindow({mindWidth: 200, maxWidth:200});
 
   name = "RWH";
@@ -229,7 +245,9 @@ const logoutBtn = document.getElementById('logoutBtn');
 document.addEventListener("DOMContentLoaded", () => {
   const weatherbutton = document.getElementById("pickWeatherBtn");
   weatherbutton.addEventListener("click",() => {
-    alert("Button Clicked");
+    pickMode = true;
+    map.setOptions({ draggableCursor: 'crosshair'});
+    alert("Click anywhere on the map to get the weather report");
   });
 });
 
