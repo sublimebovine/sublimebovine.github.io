@@ -1,10 +1,10 @@
-
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const path = require('path');
 const express = require('express');
 const app = express();
+require('dotenv').config();
 
 // Initial connection 
 const dbConfig = {
@@ -217,6 +217,58 @@ app.post('/addReview', (req, res) => {
   });
 });
 
+
+app.post('/api/forecast', (req, res) => {
+  const { lat, lon, forecast, timestamp} = req.body;
+
+  const query = 'INSERT INTO forecast (source, lat, lon, TIME, DATE) VALUES (?, ?, ?, ?, ?)';
+  db.query(query, ['openweathermap', lat, lon, Math.floor(Date.now()/1000), timestamp], (err, results) => {
+    if (err) {
+      console.error('Error inserting forecast:', err);
+      return res.status(500).send('Error inserting forecast data.');
+    }
+    res.json({ success: true, id: results.insertId });
+  });
+});
+
+app.get('/api/forecast/:lat/:lon', (req, res) => {
+  const { lat, lon } = req.params;
+  
+  const query = 'SELECT * FROM forecast WHERE Lat = ? AND Lon = ? ORDER BY TIME DESC LIMIT 1';
+  db.query(query, [lat, lon], (err, results) => {
+    if (err) {
+      console.error('Error fetching forecast:', err);
+      return res.status(500).send('Error fetching forecast data');
+    }
+    res.json(results[0] || { message: 'No forecast found' });
+  });
+});
+
+app.get('/api/weather', async (req, res) => {
+  const { lat, lon } = req.query;
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${process.env.REACT_APP_OPENWEATHER_API_KEY}`
+    );
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/weather/forecast', async (req, res) => {
+  const { lat, lon } = req.query;
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${process.env.REACT_APP_OPENWEATHER_API_KEY}`
+    );
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
       

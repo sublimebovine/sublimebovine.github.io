@@ -54,6 +54,19 @@
 
 <input id="search-box" type="text" placeholder="Search for a place...">
 
+<div id="weather-container" style="position: absolute; top: 60px; left: 10px; z-index: 5; background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: none;">
+  <h3 id="weather-location">Weather</h3>
+  <div id="weather-current">
+    <div id="weather-temp"></div>
+    <div id="weather-desc"></div>
+    <img id="weather-icon" src="" alt="Weather icon" style="width: 50px; height: 50px;">
+  </div>
+  <div id="weather-details">
+    <div>Humidity: <span id="weather-humidity"></span>%</div>
+    <div>Wind: <span id="weather-wind"></span> m/s</div>
+  </div>
+</div>
+
 <div id="buttons">
   <a href="reviews.html" id="reviews"><button id="reviewsBtn">Reviews</button></a>
   <a href="login.html" id="login"><button id="loginBtn">Login</button></a>
@@ -63,6 +76,7 @@
   <button id="logoutBtn" style="display:none;">Logout</button>
 </div>
 
+<button id="test-weather" style="position: absolute; top: 150px; left: 10px; z-index: 10; background-color: #f44336; color: white;">Test Weather</button>
 
 <div id="map"></div>
 
@@ -77,12 +91,15 @@ async function initMap() {
   });
   infoWindow= new google.maps.InfoWindow({mindWidth: 200, maxWidth:200})
 
+function loadWeatherScript() {
+  const script = document.createElement('script');
+  script.src = '/js/weather-service.js'; // You'll need to create this file
+  document.body.appendChild(script);
+}
+loadWeatherScript();
 
-
-// ✅ Initial connection WITHOUT database (to create it if missing)
-function addmarker(lat,long,rating,name,Description){
-console.log("a")
-const marker = new google.maps.Marker({position: {lat: lat, lng: long },map: map});
+function addmarker(lat, long, rating, name, Description){
+  const marker = new google.maps.Marker({position: {lat: lat, lng: long }, map: map});
   function window(){
     str1='<div class ="feh-content"> <img src="'
     str2='s.png" alt="stars" width="100" height="50">'
@@ -91,12 +108,54 @@ const marker = new google.maps.Marker({position: {lat: lat, lng: long },map: map
     description=' <p>'+Description+'</p>'
     str3= '</div>'
     const windowdata=str1+num+str2+name+description+str3;
-      google.maps.event.addListener(marker, 'click', function(){
+    
+    google.maps.event.addListener(marker, 'click', function(){
       infoWindow.setContent(windowdata);
       infoWindow.open(map, marker);
-  });}
-  window()
+      
+      fetchAndDisplayWeather(lat, long, name);
+    });
+  }
+  window();
 }
+
+async function fetchAndDisplayWeather(lat, lon, locationName) {
+  try {
+    const weatherContainer = document.getElementById('weather-container');
+    weatherContainer.style.display = 'block';
+    document.getElementById('weather-location').textContent = `Weather for ${locationName}`;
+    
+    const weatherData = await getWeather(lat, lon);
+    
+    document.getElementById('weather-temp').textContent = `${Math.round(weatherData.main.temp)}°C`;
+    document.getElementById('weather-desc').textContent = weatherData.weather[0].description;
+    document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`;
+    document.getElementById('weather-humidity').textContent = weatherData.main.humidity;
+    document.getElementById('weather-wind').textContent = weatherData.wind.speed;
+    
+    saveWeatherToDatabase(lat, lon, weatherData);
+  } catch (error) {
+    console.error('Error fetching weather:', error);
+  }
+}
+
+async function saveWeatherToDatabase(lat, lon, weatherData) {
+  try {
+    await fetch('/api/forecast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        lat,
+        lon,
+        forecast: JSON.stringify(weatherData),
+        timestamp: new Date().toISOString()
+      })
+    });
+  } catch (error) {
+    console.error('Error saving weather data:', error);
+  }
+}
+
 name = "RWH";
     try {
       const res = await fetch(`/location/${encodeURIComponent(name)}`);
@@ -185,6 +244,18 @@ if (isLoggedIn) {
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem('loggedIn');
   location.reload();
+});
+
+document.getElementById('test-weather').addEventListener('click', async () => {
+  try {
+    // NYC coordinates
+    const lat = 40.7128;
+    const lon = -74.0060;
+    console.log('Testing weather for NYC...');
+    fetchAndDisplayWeather(lat, lon, 'New York City');
+  } catch (error) {
+    console.error('Weather test failed:', error);
+  }
 });
 </script>
 
