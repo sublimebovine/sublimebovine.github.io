@@ -40,6 +40,14 @@
       border-radius: 10px;
       box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
     }
+    #search-form-master {
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+    }
     input, textarea, select {
       width: 100%;
       padding: 10px;
@@ -62,7 +70,20 @@
   </style>
 </head>
 <body>
-
+  <h1>search</h1>
+  <div id="search-form-master" style="display:none;">
+    <h2>Search Reviews</h2>
+    <form id="search-form">
+      <div class="field">
+        <label for="Name">Name:</label>
+        <input type="Name" id ="searchName" placeholder="Enter Name" name="Name" class="Name" required>
+      </div>
+      <div class="searchButton">
+        <input type="submit" value="Name">
+      </div>
+      <button id="submitSearch">Submit Search</button>
+    </form>
+  </div>
 <h1>Reviews</h1>
 
 //reviews list
@@ -84,11 +105,8 @@
       <option value="5">5 - Amazing</option>
     </select>
     <button type="submit">Submit Review</button>
-  </form>
-</div>
-
 <script>
-async function loadReviews() {
+async function loadReviews(name) {
   try {
     const res = await fetch('/reviews');
     const reviews = await res.json();
@@ -96,6 +114,9 @@ async function loadReviews() {
     list.innerHTML = '';
 
     reviews.forEach(r => {
+      console.log(name)
+      console.log(r.Name==name)
+      if(r.Name==name){
       const div = document.createElement('div');
       div.className = 'review';
       div.innerHTML = `
@@ -104,21 +125,36 @@ async function loadReviews() {
         <p>${r.Text}</p>
       `;
       list.appendChild(div);
-    });
+  }});
   } catch (err) {
     console.error('Failed to load reviews.', err);
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadReviews();
+  //loadReviews("sean");
 
   const loggedIn = localStorage.getItem('loggedIn') === 'true';
   if (loggedIn) {
     document.getElementById('new-review-form').style.display = 'block';
   }
-
+  document.getElementById('search-form-master').style.display = 'block';
   const form = document.getElementById('reviewForm');
+  const searchform=document.getElementById('search-form');
+  const searchBtn = document.getElementById('submitSearch');
+  console.log("as")
+  searchBtn.addEventListener('click',async (e) => {
+    e.preventDefault();
+    console.log("a")
+    console.log(document.getElementById('searchName').value);
+    console.log("sean")
+    //console.log("sean")
+    try {
+    loadReviews(document.getElementById('searchName').value);}
+    catch(error){
+      console.error(":(")
+    }
+  })
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -138,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (res.ok) {
         alert('Review submitted!');
-        loadReviews();
+        //loadReviews("sean");
         form.reset();
       } else {
         alert('Failed to submit review.');
