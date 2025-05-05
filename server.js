@@ -119,39 +119,7 @@ connection.connect(err => {
   });
 });
 
-      const createEmailTableQuery = `
-  CREATE TABLE IF NOT EXISTS emails (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL
-  );
-`;
 
-db.query(createEmailTableQuery, err => {
-  if (err) throw err;
-  console.log('Emails table ensured.');
-});
-
-
-app.post('/submit_email', (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).send('Email is required.');
-  }
-
-  const insertEmailQuery = 'INSERT INTO emails (email) VALUES (?)';
-  db.query(insertEmailQuery, [email], (err) => {
-    if (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
-        return res.status(400).send('Email already registered.');
-      } else {
-        console.error('Database error:', err);
-        return res.status(500).send('Database error.');
-      }
-    }
-    res.send('Email registered successfully!');
-  });
-});
 
 //premium feature
 app.post('/submit_email', async (req, res) => {
@@ -165,7 +133,7 @@ app.post('/submit_email', async (req, res) => {
         console.error('Database error:', err);
         return res.status(500).send('Error saving to database');
       }
-      res.send('Thanks for purchasing Premium!');
+      res.redirect('/thankyou.html');
     });
   } catch (error) {
     console.error('Error hashing password:', error);
