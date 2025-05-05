@@ -159,12 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
 
     const data = {
-  username: localStorage.getItem('username') || 'guest',
-  name: document.getElementById('locationName').value,
-  code: document.getElementById('locationCode').value,
-  text: document.getElementById('reviewText').value,
-  rating: parseInt(document.getElementById('rating').value),
-};
+      name: document.getElementById('locationName').value,
+      code: document.getElementById('locationCode').value,
+      text: document.getElementById('reviewText').value,
+      rating: parseInt(document.getElementById('rating').value),
+    };
 
     try {
       const res = await fetch('/addReview', {
