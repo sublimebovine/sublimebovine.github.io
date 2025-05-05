@@ -213,24 +213,29 @@ app.get('/reviews', (req, res) => {
 });
 
 app.post('/addReview', (req, res) => {
-  const { name, code, text, rating } = req.body;
-  const username = 'test'; // hardcoded for now
+  const { username, name, code, text, rating } = req.body;
 
   connection.query('USE login_db', (err) => {
-    if (err) {
-      console.error('Error switching database:', err);
-      return res.status(500).send('Error switching database.');
-    }
-    const insertReview = `
-      INSERT INTO reviews (User, Text, Rating, Code, Name)
-      VALUES (?, ?, ?, ?, ?)
-    `;
-    connection.query(insertReview, [username, text, rating, code, name], (err, result) => {
-      if (err) {
-        console.error('Error adding review:', err);
-        return res.status(500).send('Error adding review.');
+    if (err) return res.status(500).send('Error switching database.');
+
+    const checkPremiumQuery = 'SELECT isPremium FROM users WHERE username = ?';
+    connection.query(checkPremiumQuery, [username], (err, results) => {
+      if (err || results.length === 0) {
+        return res.status(403).send('User not found.');
       }
-      res.send('Review added successfully.');
+
+      if (!results[0].isPremium) {
+        return res.status(403).send('Only premium users can post reviews.');
+      }
+
+      const insertReview = `
+        INSERT INTO reviews (User, Text, Rating, Code, Name)
+        VALUES (?, ?, ?, ?, ?)
+      `;
+      connection.query(insertReview, [username, text, rating, code, name], (err) => {
+        if (err) return res.status(500).send('Error adding review.');
+        res.send('Review added successfully.');
+      });
     });
   });
 });
