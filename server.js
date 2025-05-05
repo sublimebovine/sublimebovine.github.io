@@ -122,24 +122,39 @@ connection.connect(err => {
 
 
 //premium feature
-app.post('/submit_email', async (req, res) => {
-  const { username, email, password } = req.body;
-
-  try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-    db.query(query, [username, email, hashedPassword], (err, results) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).send('Error saving to database');
-      }
-      res.redirect('/thankyou.html');
-    });
-  } catch (error) {
-    console.error('Error hashing password:', error);
-    res.status(500).send('Error processing request');
-  }
-});
+const createEmailTableQuery = `
+   CREATE TABLE IF NOT EXISTS emails (
+     id INT AUTO_INCREMENT PRIMARY KEY,
+     email VARCHAR(255) UNIQUE NOT NULL
+   );
+ `;
+ 
+ db.query(createEmailTableQuery, err => {
+   if (err) throw err;
+   console.log('Emails table ensured.');
+ });
+ 
+ 
+ app.post('/submit_email', (req, res) => {
+   const { email } = req.body;
+ 
+   if (!email) {
+     return res.status(400).send('Email is required.');
+   }
+ 
+   const insertEmailQuery = 'INSERT INTO emails (email) VALUES (?)';
+   db.query(insertEmailQuery, [email], (err) => {
+     if (err) {
+       if (err.code === 'ER_DUP_ENTRY') {
+         return res.status(400).redirect('/duplicate.html')
+       } else {
+         console.error('Database error:', err);
+         return res.status(500).send('Database error.');
+       }
+     }
+     res.redirect('/thankyou.html');
+   });
+ });
       
 
       app.get('/health', (req, res) => {
