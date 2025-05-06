@@ -6,7 +6,7 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 
-// Initial connection 
+
 const dbConfig = {
   host: 'localhost',
   user: 'root', // change if using a different user
@@ -20,7 +20,6 @@ connection.connect(err => {
   if (err) throw err;
   console.log('Connected to MySQL server.');
 
-  // Create database if it doesn't exist
   connection.query('CREATE DATABASE IF NOT EXISTS login_db', (err) => {
     if (err) throw err;
     console.log('Database ensured: login_db');
@@ -32,7 +31,7 @@ connection.connect(err => {
       if (err) throw err;
       console.log('Connected to login_db');
 
-      // Create users table if it doesn't exist
+      // Create users
       const createTableQuery = `
         CREATE TABLE IF NOT EXISTS users (
           id INT AUTO_INCREMENT PRIMARY KEY,
@@ -46,13 +45,11 @@ connection.connect(err => {
         console.log('Users table ensured.');
       });
 
-      // Middleware & Routes
       app.use(bodyParser.urlencoded({ extended: true }));
       app.use(bodyParser.json());
       app.use(express.static(path.join(__dirname, 'public')));
 
 
-       // Serve index.html manually from "public" folder
        app.get('/', (req, res) => {
        res.sendFile(path.join(__dirname, 'public', 'index.html'));
        });
@@ -100,7 +97,7 @@ connection.connect(err => {
         });
       });
       app.get('/logout', (req, res) => {
-        // In app you clear session or token here
+
         res.send('You have been logged out.');
       });
 
@@ -178,7 +175,6 @@ const createEmailTableQuery = `
     });
   }); 
 
-//reviews to go with reviews.html
 app.get('/reviews', (req, res) => {
   connection.query('USE login_db', (err) => {
     if (err) {
@@ -197,7 +193,7 @@ app.get('/reviews', (req, res) => {
 
 app.post('/addReview', (req, res) => {
   const { name, code, text, rating } = req.body;
-  const username = 'test'; // hardcoded for now
+  const username = 'test';
 
   connection.query('USE login_db', (err) => {
     if (err) {
@@ -272,8 +268,6 @@ app.get('/api/weather/forecast', async (req, res) => {
 });
 
 
-      
-      // Start server
       const PORT = 3000;
       app.listen(PORT, '0.0.0.0', () => {
         console.log(`Server running at http://localhost:${PORT}`);
